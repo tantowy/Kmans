@@ -14,40 +14,49 @@ class Kmeans extends CI_Controller {
     
     public function index()
     {
-        $var = $this->set_objek_matrik();
-        $k = 5;
-        $mod_tfidf = $this->tabel->ambil_weight_tfidf();
-        $data['mod_dokumen_cluster'] = $this->tabel->ambil_dokumen_cluster();
-        $data['konfig'] = $this->tabel->ambil_konfig();
-        if(isset($_POST['k_means'])){
-            $k = $_POST['k_means'];
-        }
-        $data['mod_clustering'] = $this->clustering($var, $k);
-        
-        if(isset($_POST['k_means'])){
-             $k = $_POST['k_means'];
-             foreach($mod_tfidf as $value){
-                 $ada = $this->tabel->cek_dok_di_cluster($value->dokumen_id);
-                 if($ada <= 0){
-                     $this->tabel->insert_dok_cluster($value->dokumen_id,$value->tfidf);
-                 }else{
-                     $this->tabel->update_dok_cluster($value->dokumen_id,$value->tfidf);
+        $cekWtfidf = $this->tabel->ambil_weight_tfidf();
+        if(count($cekWtfidf)<=0 && !isset($_POST['k_means'])){
+            $data['mod_dokumen_cluster'] = null;
+            $data['konfig'] = $this->tabel->ambil_konfig();
+            $data['mod_clustering'] = null;
+
+        }else{
+            $var = $this->set_objek_matrik();
+            $k = 5;
+            $mod_tfidf = $this->tabel->ambil_weight_tfidf();
+            $data['mod_dokumen_cluster'] = $this->tabel->ambil_dokumen_cluster();
+            $data['konfig'] = $this->tabel->ambil_konfig();
+            if(isset($_POST['k_means'])){
+                $k = $_POST['k_means'];
+            }
+            $data['mod_clustering'] = $this->clustering($var, $k);
+            
+            if(isset($_POST['k_means'])){
+                 $k = $_POST['k_means'];
+                 foreach($mod_tfidf as $value){
+                     $ada = $this->tabel->cek_dok_di_cluster($value->dokumen_id);
+                     if($ada <= 0){
+                         $this->tabel->insert_dok_cluster($value->dokumen_id,$value->tfidf);
+                     }else{
+                         $this->tabel->update_dok_cluster($value->dokumen_id,$value->tfidf);
+                     }
                  }
-             }
-             $this->tabel->update_config_k($k);
-             if(count($this->clustering_dok)>0){
-                 foreach ($this->clustering_dok as $key => $value) {
-                 
-                }
-             }
-             if(count($this->clustering_dok)>0){
-                foreach ($this->clustering_dok as $key => $value) {
-                    foreach ($value as $val){
-                        $this->tabel->update_dok_cluster($val->y,$val->x,$key);
+                 $this->tabel->update_config_k($k);
+                 if(count($this->clustering_dok)>0){
+                     foreach ($this->clustering_dok as $key => $value) {
+                     
                     }
-               }
+                 }
+                 if(count($this->clustering_dok)>0){
+                    foreach ($this->clustering_dok as $key => $value) {
+                        foreach ($value as $val){
+                            $this->tabel->update_dok_cluster($val->y,$val->x,$key);
+                        }
+                   }
+                }
             }
         }
+        
         
         $this->load->view('kmeans',$data);
     }

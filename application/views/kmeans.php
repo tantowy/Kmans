@@ -88,13 +88,15 @@
                                                 <tbody>
                                                     <?php 
                                                         $no = 1;
-                                                        foreach($mod_dokumen_cluster as $value){
-                                                            echo '<tr>';
-                                                            echo '<td>'.$no.'</td>';
-                                                            echo '<td>'.$value->dokumen_judul.'</td>';
-                                                            echo '<td>'.$value->cluster.'</td>';
-                                                            echo '</tr>';
-                                                            $no++;
+                                                        if(count($mod_dokumen_cluster)){
+                                                            foreach($mod_dokumen_cluster as $value){
+                                                                echo '<tr>';
+                                                                echo '<td>'.$no.'</td>';
+                                                                echo '<td>'.$value->dokumen_judul.'</td>';
+                                                                echo '<td>'.$value->cluster.'</td>';
+                                                                echo '</tr>';
+                                                                $no++;
+                                                            }
                                                         }
                                                     ?>
                                                 </tbody>
