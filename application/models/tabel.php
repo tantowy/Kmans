@@ -67,7 +67,7 @@ class Tabel extends CI_Model {
     }
     
     public function ambil_dokumen_cluster(){
-        $query = $this->db->query('SELECT * FROM cluster JOIN dokumen_m ON dokumen_m.`dokumen_id`=cluster.`id_cluster` ORDER BY cluster');
+        $query = $this->db->query('SELECT * FROM cluster JOIN dokumen_m ON dokumen_m.`dokumen_id`=cluster.`dokumen_id` ORDER BY cluster');
         $result = $query->result();
         return $result;
     }
@@ -183,6 +183,10 @@ class Tabel extends CI_Model {
     
     public function update_config_k($k){
         $query = $this->db->query('update konfig set jml_cluster='.$k.' where id_konfig=1');
+    }
+
+    public function hapus_cluster(){
+        $this->db->truncate('cluster');
     }
 
 }
