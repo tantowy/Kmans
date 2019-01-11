@@ -26,14 +26,12 @@ class TeksProcessing extends CI_Controller {
                 $this->Processing($value->dokumen_judul, $value->dokumen_id);
             }
         }
-       redirect('TeksProcessing');
+        redirect('/teksProcessing');
     }
     
     public function Processing($isi_dokumen=null,$id_dokumen=null) {
         $stemming = new Stemming_nazief_adriani();
-        
-//        $isi_dokumen = "saya sebenarnya akan main bola, dan akan main motor. dan akan menonton bola";
-        
+                
         $isi_dokumen = str_replace($this->tokenKarakter,'',$isi_dokumen);
         // fungsi str_word_count utk menghitung jumlah huruf pada dokumen
         $hitungKata = str_word_count($isi_dokumen, 1);
@@ -64,8 +62,6 @@ class TeksProcessing extends CI_Controller {
             );
             $this->tabel->insert_dokumen_term($data_dokumen_term);
         }
-        // echo '<pre>';
-        // print_r($hitungKata);
     }
     
     private function filter(&$valToken, $keyToken) {
@@ -84,6 +80,6 @@ class TeksProcessing extends CI_Controller {
             $w = round(($tf * log($n/$NTerm)), 2);
             $this->tabel->update_bobot($id_term,$w);
         }
-        redirect('TeksProcessing');
+        redirect('/teksProcessing');
     }
 }
