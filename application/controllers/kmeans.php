@@ -14,32 +14,37 @@ class Kmeans extends CI_Controller {
     
     public function index()
     {
-        $cekWtfidf = $this->tabel->ambil_weight_tfidf();
+        $cekWtfidf = $this->tabel->ambil_dokumen_cluster();
         if(count($cekWtfidf)<=0 && !isset($_POST['k_means'])){
             $data['mod_dokumen_cluster'] = null;
             $data['konfig'] = $this->tabel->ambil_konfig();
             $data['mod_clustering'] = null;
 
         }else{
-            $var = $this->set_objek_matrik();
-            $k = 5;
-            $mod_tfidf = $this->tabel->ambil_weight_tfidf();
-            $data['mod_dokumen_cluster'] = $this->tabel->ambil_dokumen_cluster();
-            $data['konfig'] = $this->tabel->ambil_konfig();
-            if(isset($_POST['k_means'])){
-                $k = $_POST['k_means'];
+            foreach($this->tabel->ambil_konfig() as $konfig_value){
+                $k = $konfig_value->jml_cluster;
             }
-            $data['mod_clustering'] = $this->clustering($var, $k);
+            if(count($cekWtfidf)<=0 && !isset($_POST['k_means'])){
+                $data['mod_dokumen_cluster'] = null;
+                $data['konfig'] = $this->tabel->ambil_konfig();
+                $data['mod_clustering'] = null;
+            }else{
+                $var = $this->set_objek_matrik();
+            
+                $mod_tfidf = $this->tabel->ambil_weight_tfidf();
+                $data['mod_dokumen_cluster'] = $this->tabel->ambil_dokumen_cluster();
+                $data['konfig'] = $this->tabel->ambil_konfig();
+                if(isset($_POST['k_means'])){
+                    $k = $_POST['k_means'];
+                }
+                $data['mod_clustering'] = $this->clustering($var, $k);
+            }
             
             if(isset($_POST['k_means'])){
                  $k = $_POST['k_means'];
+                 $this->tabel->hapus_cluster();
                  foreach($mod_tfidf as $value){
-                     $ada = $this->tabel->cek_dok_di_cluster($value->dokumen_id);
-                     if($ada <= 0){
-                         $this->tabel->insert_dok_cluster($value->dokumen_id,$value->tfidf);
-                     }else{
-                         $this->tabel->update_dok_cluster($value->dokumen_id,$value->tfidf);
-                     }
+                    $this->tabel->insert_dok_cluster($value->dokumen_id,$value->tfidf);
                  }
                  $this->tabel->update_config_k($k);
                  if(count($this->clustering_dok)>0){
@@ -54,6 +59,7 @@ class Kmeans extends CI_Controller {
                         }
                    }
                 }
+                redirect('/kmeans');
             }
         }
         
